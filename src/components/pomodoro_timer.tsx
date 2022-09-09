@@ -1,4 +1,3 @@
-import { time } from 'console';
 import React, { useEffect } from 'react';
 import { useInterval } from '../hooks/user_interval';
 import { secondsToTime } from '../utils/seconds_to_time';
@@ -16,9 +15,11 @@ export function PomodoroTimer(props: Props): JSX.Element {
   const [mainTime, setMainTime] = React.useState(props.pomodoroTime);
   const [timeCounting, setTimeCounting] = React.useState(false);
   const [working, setWorking] = React.useState(false);
+  const [resting, setResting] = React.useState(false);
 
   useEffect(() => {
     if (working) document.body.classList.add('working');
+    if (resting) document.body.classList.remove('working');
   }, [working]);
 
   useInterval(
@@ -31,6 +32,20 @@ export function PomodoroTimer(props: Props): JSX.Element {
   const configureWork = () => {
     setTimeCounting(true);
     setWorking(true);
+    setResting(false);
+    setMainTime(props.pomodoroTime);
+  };
+
+  const configureRest = (long: boolean) => {
+    setTimeCounting(true);
+    setWorking(false);
+    setResting(true);
+
+    if (long) {
+      setMainTime(props.longRestTime);
+    } else {
+      setMainTime(props.shortRestTime);
+    }
   };
 
   return (
@@ -40,8 +55,9 @@ export function PomodoroTimer(props: Props): JSX.Element {
 
       <div className="controls">
         <Button text="Work" onClick={() => configureWork()}></Button>
-        <Button text="Stop" onClick={() => console.log(1)}></Button>
+        <Button text="Rest" onClick={() => configureRest(false)}></Button>
         <Button
+          className={!working && !resting ? 'hidden' : ''}
           text={timeCounting ? 'Pause' : 'Play'}
           onClick={() => setTimeCounting(!timeCounting)}
         ></Button>
@@ -49,10 +65,10 @@ export function PomodoroTimer(props: Props): JSX.Element {
 
       <div className="details">
         <p>
-          Testando: Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-          Voluptates, natus exercitationem? Quaerat, laborum dignissimos illo,
-          commodi minus aspernatur excepturi eos alias nemo beatae veritatis
-          tempora voluptatibus, unde magnam voluptatum ratione.
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas
+          repellendus dolorem, aliquid minima nihil sapiente sed quo excepturi
+          ipsa veritatis quisquam cupiditate nulla obcaecati odit! Natus
+          suscipit id at quaerat!
         </p>
       </div>
     </div>
